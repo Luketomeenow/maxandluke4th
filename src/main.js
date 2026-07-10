@@ -157,11 +157,13 @@ function buildPlate(year) {
   return plate;
 }
 
-function img(item, extra = "") {
+function img(item, extra = "", sizes = "(max-width: 900px) 46vw, 320px") {
   // "extra" may override loading; duplicate attributes are ignored, so only
   // emit the lazy default when no override is given
   const loading = extra.includes("loading=") ? "" : 'loading="lazy"';
-  return `<img src="${item.src}" ${extra} ${loading} decoding="async" alt=""
+  return `<img src="${item.src}"
+    srcset="${item.t} 480w, ${item.m} 960w, ${item.src} 1600w" sizes="${sizes}"
+    ${extra} ${loading} decoding="async" alt=""
     style="background:${item.color}" width="${item.w}" height="${item.h}" />`;
 }
 
@@ -238,7 +240,7 @@ function buildYear2(photos) {
       const cell = document.createElement("div");
       cell.className = "g2-cell";
       cell.dataset.no = `F.${String(i + 1).padStart(3, "0")}`;
-      cell.innerHTML = img(p);
+      cell.innerHTML = img(p, "", "42vh");
       cell.addEventListener("click", () => openLightbox(photos, i));
       rowEl.appendChild(cell);
     });
@@ -305,7 +307,7 @@ function buildYear3(photos) {
     const el = document.createElement("figure");
     el.className = "g3-item";
     el.innerHTML = `
-      ${img(p)}
+      ${img(p, "", "(max-width: 520px) 46vw, 40vw")}
       <figcaption class="g3-caption">STILL ${String(i + 1).padStart(3, "0")} — REMEMBERED IN COLOR</figcaption>
     `;
     el.addEventListener("click", () => openLightbox(photos, i));
@@ -375,11 +377,11 @@ function buildYear4(photos) {
     cell.className = "g4-cell";
     if (p.video) {
       cell.innerHTML = `
-        <video src="${p.video}" poster="${p.src}" muted loop playsinline
+        <video src="${p.video}" poster="${p.t}" muted loop playsinline
           preload="none" style="background:${p.color}"></video>
         <span class="g4-badge mono">LIVE</span>`;
     } else {
-      cell.innerHTML = img(p, 'loading="eager"');
+      cell.innerHTML = img(p, 'loading="eager"', "(max-width: 900px) 20vw, 12vw");
     }
     cell.addEventListener("click", () => openLightbox(photos, photos.indexOf(p)));
     grid.appendChild(cell);

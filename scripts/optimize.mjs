@@ -15,16 +15,31 @@ const VIDEO_YEARS = new Set([4]);
 const years = [1, 2, 3, 4];
 const manifest = {};
 
-async function toWebp(input) {
-  const buf = await sharp(input)
+// three rungs: 480px thumb for tiles, 960px for large tiles / retina,
+// 1600px for the lightbox
+const SIZES = [
+  { suffix: "", width: 1600, quality: 76 },
+  { suffix: "-m", width: 960, quality: 72 },
+  { suffix: "-t", width: 480, quality: 70 },
+];
+
+async function toWebp(input, outDir, name) {
+  const full = await sharp(input)
     .rotate()
     .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
     .webp({ quality: 76 })
     .toBuffer();
-  const meta = await sharp(buf).metadata();
-  const { dominant } = await sharp(buf).stats();
+  await writeFile(path.join(outDir, `${name}.webp`), full);
+  for (const { suffix, width, quality } of SIZES.slice(1)) {
+    const buf = await sharp(full)
+      .resize({ width, height: width, fit: "inside", withoutEnlargement: true })
+      .webp({ quality })
+      .toBuffer();
+    await writeFile(path.join(outDir, `${name}${suffix}.webp`), buf);
+  }
+  const meta = await sharp(full).metadata();
+  const { dominant } = await sharp(full).stats();
   return {
-    buf,
     w: meta.width,
     h: meta.height,
     color: `rgb(${dominant.r},${dominant.g},${dominant.b})`,
@@ -53,9 +68,9 @@ for (const year of years) {
     i += 1;
     const id = String(i).padStart(3, "0");
     try {
-      const { buf, w, h, color } = await toWebp(path.join(srcDir, file));
-      await writeFile(path.join(outDir, `${id}.webp`), buf);
-      const entry = { src: `/photos/y${year}/${id}.webp`, w, h, color };
+      const { w, h, color } = await toWebp(path.join(srcDir, file), outDir, id);
+      const base = `/photos/y${year}/${id}`;
+      const entry = { src: `${base}.webp`, m: `${base}-m.webp`, t: `${base}-t.webp`, w, h, color };
       entries.push(entry);
       entryByBasename.set(path.parse(file).name.toLowerCase(), entry);
     } catch (err) {
@@ -96,12 +111,14 @@ for (const year of years) {
         execFileSync(ffmpeg, ["-y", "-ss", "0.5", "-i", outPath, "-frames:v", "1", frame], {
           stdio: ["ignore", "ignore", "pipe"],
         });
-        const posterName = `v-${base.replace(/[^a-z0-9_-]/g, "")}.webp`;
-        const { buf, w, h, color } = await toWebp(frame);
-        await writeFile(path.join(outDir, posterName), buf);
+        const posterBase = `v-${base.replace(/[^a-z0-9_-]/g, "")}`;
+        const { w, h, color } = await toWebp(frame, outDir, posterBase);
         await rm(frame);
+        const urlBase = `/photos/y${year}/${posterBase}`;
         standalone.push({
-          src: `/photos/y${year}/${posterName}`,
+          src: `${urlBase}.webp`,
+          m: `${urlBase}-m.webp`,
+          t: `${urlBase}-t.webp`,
           w, h, color,
           video: videoSrc,
         });
