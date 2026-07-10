@@ -196,6 +196,10 @@ img {
 .hero-line-italic {
   font-style: italic;
   font-weight: 300;
+}
+/* gradient lives on the animated span itself: a transformed child of a
+   background-clip:text parent won't paint in Chromium */
+.hero-line-italic > span {
   background: linear-gradient(90deg, var(--y1), var(--y2) 38%, var(--y3) 70%, var(--y4));
   -webkit-background-clip: text;
   background-clip: text;
