@@ -167,6 +167,31 @@ function img(item, extra = "", sizes = "(max-width: 900px) 46vw, 320px") {
     style="background:${item.color}" width="${item.w}" height="${item.h}" />`;
 }
 
+/* muted in-gallery clip; plays while on screen (see playWhileVisible) */
+function videoTile(item) {
+  return `
+    <video src="${item.video}" poster="${item.t}" muted loop playsinline preload="none"
+      style="background:${item.color};aspect-ratio:${item.w} / ${item.h}"></video>
+    <span class="live-badge mono">LIVE</span>`;
+}
+
+const playWhileVisible = reducedMotion
+  ? null
+  : new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          const v = e.target.querySelector("video");
+          if (e.isIntersecting) v.play().catch(() => {});
+          else v.pause();
+        }),
+      { threshold: 0.15 }
+    );
+
+function observeVideos(root) {
+  if (!playWhileVisible) return;
+  root.querySelectorAll("video").forEach((v) => playWhileVisible.observe(v.parentElement));
+}
+
 /* ------------------------------------------------------------------
    YEAR 1 — THE SPARK
    Polaroids scattered on a table, each developing as it enters view.
@@ -240,13 +265,14 @@ function buildYear2(photos) {
       const cell = document.createElement("div");
       cell.className = "g2-cell";
       cell.dataset.no = `F.${String(i + 1).padStart(3, "0")}`;
-      cell.innerHTML = img(p, "", "42vh");
+      cell.innerHTML = p.video ? videoTile(p) : img(p, "", "42vh");
       cell.addEventListener("click", () => openLightbox(photos, i));
       rowEl.appendChild(cell);
     });
     stage.insertBefore(rowEl, stage.querySelector(".g2-progress"));
     return rowEl;
   });
+  observeVideos(stage);
 
   requestAnimationFrame(() => {
     if (reducedMotion) {
@@ -307,12 +333,13 @@ function buildYear3(photos) {
     const el = document.createElement("figure");
     el.className = "g3-item";
     el.innerHTML = `
-      ${img(p, "", "(max-width: 520px) 46vw, 40vw")}
-      <figcaption class="g3-caption">STILL ${String(i + 1).padStart(3, "0")} — REMEMBERED IN COLOR</figcaption>
+      ${p.video ? videoTile(p) : img(p, "", "(max-width: 520px) 46vw, 40vw")}
+      <figcaption class="g3-caption">${p.video ? "MOTION" : "STILL"} ${String(i + 1).padStart(3, "0")} — REMEMBERED IN COLOR</figcaption>
     `;
     el.addEventListener("click", () => openLightbox(photos, i));
     (i % 2 === 0 ? colA : colB).appendChild(el);
   });
+  observeVideos(wrap);
 
   const io = new IntersectionObserver(
     (entries) =>
@@ -372,34 +399,16 @@ function buildYear4(photos) {
     if (!shown[j].video) shown[j] = trimmedVideos.shift();
   }
 
-  shown.forEach((p, i) => {
+  shown.forEach((p) => {
     const cell = document.createElement("div");
     cell.className = "g4-cell";
-    if (p.video) {
-      cell.innerHTML = `
-        <video src="${p.video}" poster="${p.t}" muted loop playsinline
-          preload="none" style="background:${p.color}"></video>
-        <span class="g4-badge mono">LIVE</span>`;
-    } else {
-      cell.innerHTML = img(p, 'loading="eager"', "(max-width: 900px) 20vw, 12vw");
-    }
+    cell.innerHTML = p.video
+      ? videoTile(p)
+      : img(p, 'loading="eager"', "(max-width: 900px) 20vw, 12vw");
     cell.addEventListener("click", () => openLightbox(photos, photos.indexOf(p)));
     grid.appendChild(cell);
   });
-
-  // clips play while they're on screen, pause when they leave
-  if (!reducedMotion) {
-    const vio = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((e) => {
-          const v = e.target.querySelector("video");
-          if (e.isIntersecting) v.play().catch(() => {});
-          else v.pause();
-        }),
-      { threshold: 0.15 }
-    );
-    grid.querySelectorAll(".g4-cell video").forEach((v) => vio.observe(v.parentElement));
-  }
+  observeVideos(grid);
 
   if (reducedMotion) return stage;
 

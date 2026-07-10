@@ -24,7 +24,7 @@ npm run photos
 
 This resizes everything to WebP in `public/photos/` and regenerates `src/manifest.json`.
 
-Year 4 also picks up videos (`.mov` / `.mp4`): they're converted to muted 960px H.264 MP4s with ffmpeg (bundled via `ffmpeg-static`, no install needed). A video that shares a name with a photo (an iPhone Live Photo pair like `IMG_7599.JPG` + `IMG_7599.MOV`) plays inside that photo's tile; standalone videos get their own tile with a poster frame. Conversions are cached — already-converted clips are skipped on re-runs.
+Years 2–4 also pick up videos (`.mov` / `.mp4`): they're converted to muted 960px H.264 MP4s with ffmpeg (bundled via `ffmpeg-static`, no install needed). A video that shares a name with a photo (an iPhone Live Photo pair like `IMG_7599.JPG` + `IMG_7599.MOV`) plays inside that photo's tile; standalone videos get their own tile with a poster frame. Conversions are cached — already-converted clips are skipped on re-runs. To add videos to Year 1 too, add `1` to `VIDEO_YEARS` in `scripts/optimize.mjs`.
 
 ## Deploy to Netlify
 

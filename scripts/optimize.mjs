@@ -10,7 +10,7 @@ const OUT = path.resolve(import.meta.dirname, "..", "public", "photos");
 const IMG_EXT = new Set([".jpg", ".jpeg", ".png"]);
 const VID_EXT = new Set([".mov", ".mp4"]);
 // years whose videos are converted and shown in the gallery
-const VIDEO_YEARS = new Set([4]);
+const VIDEO_YEARS = new Set([2, 3, 4]);
 
 const years = [1, 2, 3, 4];
 const manifest = {};
