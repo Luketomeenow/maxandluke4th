@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Four Years of Us — The Archive</title>
+    <meta name="description" content="Four years, one frame at a time. An archive of us." />
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@300..500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❤</text></svg>" />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="journey" aria-hidden="true"><div class="journey-fill"></div></div>
+
+    <nav class="topbar">
+      <a class="topbar-brand" href="#hero">ARCHIVE / 04.YRS</a>
+      <div class="topbar-years">
+        <a href="#year-1" data-nav="year-1">01</a>
+        <a href="#year-2" data-nav="year-2">02</a>
+        <a href="#year-3" data-nav="year-3">03</a>
+        <a href="#year-4" data-nav="year-4">04</a>
+      </div>
+    </nav>
+
+    <header class="hero" id="hero">
+      <div class="hero-numeral" aria-hidden="true">IV</div>
+      <div class="hero-inner">
+        <p class="hero-eyebrow mono">FIELD ARCHIVE — EST. JULY 2022 · 359 RECORDS RECOVERED</p>
+        <h1 class="hero-title">
+          <span class="hero-line"><span>Four&nbsp;years</span></span>
+          <span class="hero-line hero-line-italic"><span>of&nbsp;us.</span></span>
+        </h1>
+        <p class="hero-sub">
+          A complete study of one small universe — catalogued season by season,
+          laugh by laugh, from the very first photograph to now.
+        </p>
+      </div>
+      <div class="hero-scroll mono">
+        <span>SCROLL TO BEGIN THE JOURNEY</span>
+        <span class="hero-scroll-tick"></span>
+      </div>
+    </header>
+
+    <main id="chapters"></main>
+
+    <footer class="finale" id="finale">
+      <p class="mono finale-eyebrow">END OF ARCHIVE — VOLUME IV</p>
+      <h2 class="finale-title">
+        <span>Happy 4th</span>
+        <span class="finale-italic">anniversary.</span>
+      </h2>
+      <p class="finale-sub">
+        Four years, 359 memories, and not a single frame that says it all.
+        Volume V is already being written.
+      </p>
+      <p class="finale-heart" aria-hidden="true">♥</p>
+    </footer>
+
+    <div class="lightbox" hidden>
+      <button class="lightbox-close mono" aria-label="Close">CLOSE ×</button>
+      <button class="lightbox-prev mono" aria-label="Previous">←</button>
+      <img class="lightbox-img" alt="" />
+      <video class="lightbox-video" controls loop playsinline hidden></video>
+      <button class="lightbox-next mono" aria-label="Next">→</button>
+      <p class="lightbox-count mono"></p>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
